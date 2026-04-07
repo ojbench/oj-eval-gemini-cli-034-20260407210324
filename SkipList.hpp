@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <climits>
+#include <random>
 
 template<typename T>
 class SkipList {
@@ -30,23 +31,19 @@ private:
     Node* head;
     int maxLevel;
     int currentLevel;
-    unsigned int seed;
+    std::mt19937 rng;
+    std::uniform_int_distribution<int> dist;
 
     int randomLevel() {
         int lvl = 1;
-        while (lvl < maxLevel) {
-            seed = seed * 1103515245 + 12345;
-            if ((seed >> 16) & 1) {
-                lvl++;
-            } else {
-                break;
-            }
+        while (dist(rng) && lvl < maxLevel) {
+            lvl++;
         }
         return lvl;
     }
 
 public:
-    SkipList() : maxLevel(32), currentLevel(1), seed(123456789) {
+    SkipList() : maxLevel(32), currentLevel(1), rng(1337), dist(0, 1) {
         head = new Node(maxLevel);
     }
 
